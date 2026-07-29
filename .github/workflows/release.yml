@@ -73,15 +73,34 @@ jobs:
         run: dotnet build mcp-servers-for-revit.sln -c "Release R26"
 
       # ---------------------------------------------------------------
-      # Create Release Assets
+      # Create release assets
       # The AddIn output already contains the complete deployable layout
       # (plugin + commandset) thanks to the DeployCommandSet build target.
       # ---------------------------------------------------------------
-      - name: Create release assets
+      - name: Create MCP server release asset
         run: |
           $version = "${{ github.ref_name }}"
           $outputDir = "release-assets"
-          New-Item -ItemType Directory -Force -Path $outputDir
+          New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
+
+          $bundleDir = "server-release-bundle"
+          if (Test-Path $bundleDir) { Remove-Item $bundleDir -Recurse -Force }
+          New-Item -ItemType Directory -Force -Path $bundleDir | Out-Null
+
+          Copy-Item -Path "server/build" -Destination "$bundleDir/build" -Recurse -Force
+          Copy-Item -Path "server/node_modules" -Destination "$bundleDir/node_modules" -Recurse -Force
+          Copy-Item -Path "server/package.json" -Destination "$bundleDir/package.json" -Force
+          Copy-Item -Path "server/README.md" -Destination "$bundleDir/README.md" -Force
+
+          Compress-Archive -Path "$bundleDir/*" -DestinationPath "$outputDir/mcp-server-for-revit-$version.zip" -Force
+          Write-Host "Created $outputDir/mcp-server-for-revit-$version.zip"
+        shell: pwsh
+
+      - name: Create plugin release assets
+        run: |
+          $version = "${{ github.ref_name }}"
+          $outputDir = "release-assets"
+          New-Item -ItemType Directory -Force -Path $outputDir | Out-Null
 
           $revitVersions = @(
             @{ Config = "Release R20"; Year = "2020" },
