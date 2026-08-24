@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { withActivityLogging } from "../utils/activityLogger.js";
+import { withActivityLogging } from "../utils/ActivityLogger.js";
 
 export async function registerTools(server: McpServer) {
   // Intercept every server.tool(...) call so all tool invocations (from any

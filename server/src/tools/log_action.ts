@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { randomUUID } from "crypto";
-import { getLogFilePath, logActivity } from "../utils/activityLogger.js";
+import { getLogFilePath, logActivity } from "../utils/ActivityLogger.js";
 
 /**
  * Log action tool - Claude calls this to log intent before executing other MCP tools

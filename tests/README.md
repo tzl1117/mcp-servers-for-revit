@@ -122,7 +122,7 @@ thrown error or an `isError: true` tool response as a pass in that mode.
     (same `requestId`, plus `durationMs` and the full result/error) after it
     finishes. This happens for free for any tool registered via
     `server.tool(...)` - see `server/src/tools/register.ts` and
-    `server/src/utils/activityLogger.ts`.
+    `server/src/utils/ActivityLogger.ts`.
   - `layer: "CLAUDE-INTENT"` - written only when the `log_action` tool is
     explicitly called, capturing Claude's stated intent/reasoning before
     acting. Has its own `requestId`, separate from the `MCP-TOOL-CALL` entry

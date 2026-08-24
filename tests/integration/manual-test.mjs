@@ -15,7 +15,7 @@ import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { getLogFilePath } from "../../server/build/utils/activityLogger.js";
+import { getLogFilePath } from "../../server/build/utils/ActivityLogger.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverEntry = path.resolve(__dirname, "../../server/build/index.js");
