@@ -1,0 +1,148 @@
+# ⚠️ DEPRECATED: this file assumed the MCP Server exposed an HTTP endpoint.
+#
+# The actual server (server/src/index.ts) uses MCP's STDIO transport, the same
+# way Claude Desktop talks to it - there is no HTTP listener on localhost:3000,
+# so none of these requests will work with REST Client.
+#
+# Use instead:
+#   1. node tests/integration/manual-test.mjs   (automated stdio test harness)
+#   2. npx @modelcontextprotocol/inspector@latest node server/build/index.js
+#      (interactive browser UI for calling tools by hand)
+#
+# See tests/README.md for details. This file is kept only as a historical
+# reference for the request/response shapes; do not add new requests here.
+
+@baseUrl = http://localhost:3000/mcp
+@requestId = test-001
+
+### Health Check
+GET http://localhost:3000/health
+
+### MCP Handshake
+GET http://localhost:3000/mcp
+
+###
+# Test: log_action tool
+# Description: Log an action before executing other tools
+# Expected: Server responds with requestId and logged status
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": "{{requestId}}",
+  "method": "log_action",
+  "params": {
+    "action": "Test logging system",
+    "reason": "Verifying log_action tool functionality",
+    "code_summary": "Simple test to ensure logging captures Claude's intent"
+  }
+}
+
+###
+# Test: log_action with custom request ID
+# Description: Log with a specific request ID for tracing
+# Expected: Response includes the provided request ID
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": "test-002",
+  "method": "log_action",
+  "params": {
+    "action": "Override revision cloud colors",
+    "reason": "User requested all clouds to be red in the active view",
+    "code_summary": "Query FilteredElementCollector for RevisionCloud elements, iterate through collection, apply red color override to each element",
+    "requestId": "REQ-REVIT-001"
+  }
+}
+
+###
+# Test: say_hello tool (baseline test - should already work)
+# Description: Verify basic tool invocation works
+# Expected: Returns greeting message
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": "test-003",
+  "method": "say_hello",
+  "params": {
+    "name": "MCP Test Suite"
+  }
+}
+
+###
+# Test: send_code_to_revit (requires Revit running)
+# Description: Send C# code to Revit for execution
+# Expected: If Revit plugin is active, will compile and execute code
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": "test-004",
+  "method": "send_code_to_revit",
+  "params": {
+    "code": "using Autodesk.Revit.DB;\nDocument doc = parameters[\"document\"] as Document;\nView activeView = doc.ActiveView;\nreturn new { viewName = activeView.Name, success = true };",
+    "transactionMode": "auto",
+    "parameters": []
+  }
+}
+
+###
+# Test: log_action followed by send_code_to_revit (simulated Claude flow)
+# Description: First log intent, then execute code (like Claude would)
+# Expected: Two sequential responses showing complete flow
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": "test-005",
+  "method": "log_action",
+  "params": {
+    "action": "Query all walls in the active view",
+    "reason": "User wants to get a count of walls",
+    "code_summary": "Use FilteredElementCollector to find all Wall elements in the active view"
+  }
+}
+
+###
+# Test: Invalid request (should return error)
+# Description: Send malformed JSON-RPC to test error handling
+# Expected: Error response with invalid request code
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": "test-006",
+  "method": "nonexistent_method",
+  "params": {}
+}
+
+###
+# Test: Missing required parameter
+# Description: Call log_action without required 'action' parameter
+# Expected: Validation error
+###
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": "test-007",
+  "method": "log_action",
+  "params": {
+    "reason": "Missing action parameter"
+  }
+}

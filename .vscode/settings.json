@@ -1,0 +1,28 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "rest-client.environmentVariables": {
+    "$shared": {
+      "baseUrl": "http://localhost:3000/mcp",
+      "requestId": "test-001"
+    }
+  },
+  "rest-client.clearHighlightsOnRunRequest": false,
+  "rest-client.showResponseInDifferentTab": true,
+  "rest-client.timeoutinmilliseconds": 30000,
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/build": true,
+    "**/.git": true
+  },
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": true
+  }
+}

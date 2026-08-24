@@ -2,8 +2,20 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { withActivityLogging } from "../utils/activityLogger.js";
 
 export async function registerTools(server: McpServer) {
+  // Intercept every server.tool(...) call so all tool invocations (from any
+  // tool file, without touching each one individually) get logged automatically.
+  const originalTool = server.tool.bind(server);
+  server.tool = ((name: string, ...rest: unknown[]) => {
+    const handlerIndex = rest.map((arg) => typeof arg === "function").lastIndexOf(true);
+    if (handlerIndex !== -1) {
+      rest[handlerIndex] = withActivityLogging(name, rest[handlerIndex] as (...a: unknown[]) => Promise<unknown>);
+    }
+    return (originalTool as (...a: unknown[]) => unknown)(name, ...rest);
+  }) as typeof server.tool;
+
   // 获取当前文件的目录路径
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);

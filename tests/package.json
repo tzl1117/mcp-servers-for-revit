@@ -1,0 +1,9 @@
+{
+  "name": "mcp-servers-for-revit-tests",
+  "private": true,
+  "type": "module",
+  "description": "Standalone MCP stdio test harness. Depends only on the SDK so it can spawn and talk to server/build/index.js directly.",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.7.0"
+  }
+}
