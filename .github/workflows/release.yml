@@ -81,6 +81,10 @@ jobs:
           if (Test-Path $bundleDir) { Remove-Item $bundleDir -Recurse -Force }
           New-Item -ItemType Directory -Force -Path $bundleDir | Out-Null
 
+          Push-Location "server"
+          npm prune --omit=dev
+          Pop-Location
+
           Copy-Item -Path "server/build" -Destination "$bundleDir/build" -Recurse -Force
           Copy-Item -Path "server/node_modules" -Destination "$bundleDir/node_modules" -Recurse -Force
           Copy-Item -Path "server/package.json" -Destination "$bundleDir/package.json" -Force

@@ -5,6 +5,7 @@ using revit_mcp_plugin.Configuration;
 using revit_mcp_plugin.Utils;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace revit_mcp_plugin.Core
@@ -90,7 +91,8 @@ namespace revit_mcp_plugin.Core
                 }
             }
 
-            _logger.Info("命令加载完成\nCommand loading complete.");
+            int registeredCount = _commandRegistry.GetRegisteredCommands().Count();
+            _logger.Info("命令加载完成: {0}\nCommand loading complete: {0} commands registered.", registeredCount);
         }
 
         /// <summary>
@@ -168,7 +170,7 @@ namespace revit_mcp_plugin.Core
                             if (command.CommandName == config.CommandName)
                             {
                                 _commandRegistry.RegisterCommand(command);
-                                _logger.Info("创建命令实例失败 [{0}]: {1}\nFailed to create command instance [{0}]: {1}",
+                                _logger.Info("已注册命令 [{0}]: {1}\nRegistered command [{0}]: {1}",
                                     command.CommandName, Path.GetFileName(assemblyPath));
                                 break; // 找到匹配的命令后退出循环 - Exit the loop after finding a matching command.
                             }

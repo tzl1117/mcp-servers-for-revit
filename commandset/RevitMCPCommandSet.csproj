@@ -73,7 +73,9 @@
         </PropertyGroup>
 
         <ItemGroup>
-            <CommandSetBinaries Include="$(TargetDir)*.dll;$(TargetDir)*.pdb" />
+            <!-- These are supplied by the plugin root; copying them here creates a second assembly identity during Assembly.LoadFrom. -->
+            <CommandSetBinaries Include="$(TargetDir)*.dll;$(TargetDir)*.pdb"
+                                Exclude="$(TargetDir)RevitMCPSDK.dll;$(TargetDir)Newtonsoft.Json.dll" />
             <CommandJsonFile Include="$(ProjectDir)..\command.json" />
         </ItemGroup>
 
