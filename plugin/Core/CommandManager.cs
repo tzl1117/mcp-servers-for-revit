@@ -5,7 +5,6 @@ using revit_mcp_plugin.Configuration;
 using revit_mcp_plugin.Utils;
 using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace revit_mcp_plugin.Core
@@ -51,6 +50,7 @@ namespace revit_mcp_plugin.Core
             _logger.Info("开始加载命令\nStart loading command.");
             string currentVersion = _versionAdapter.GetRevitVersion();
             _logger.Info("当前 Revit 版本: {0}\nCurrent Revit version: {0}", currentVersion);
+            int registeredCount = 0;
 
             // 从配置加载外部命令
             // Load external commands from the configuration file.
@@ -84,6 +84,10 @@ namespace revit_mcp_plugin.Core
                     // 加载外部命令程序集
                     // Load external command assembly.
                     LoadCommandFromAssembly(commandConfig);
+                    if (_commandRegistry.TryGetCommand(commandConfig.CommandName, out _))
+                    {
+                        registeredCount++;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -91,7 +95,6 @@ namespace revit_mcp_plugin.Core
                 }
             }
 
-            int registeredCount = _commandRegistry.GetRegisteredCommands().Count();
             _logger.Info("命令加载完成: {0}\nCommand loading complete: {0} commands registered.", registeredCount);
         }
 
