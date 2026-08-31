@@ -298,7 +298,6 @@ namespace RevitMCPCommandSet.Services
                     // For Revit 2022-，Code changes pending approval
                     if (parameter.Definition is Autodesk.Revit.DB.InternalDefinition internalDef)
                     {
-                        // 检查是否为已知的布尔类型内置参数 (仅使用Revit 2019中确认存在的参数)
                         BuiltInParameter bip = internalDef.BuiltInParameter;
                         if (bip == BuiltInParameter.IS_VISIBLE_PARAM ||
                             bip == BuiltInParameter.WALL_ATTR_ROOM_BOUNDING ||
@@ -307,7 +306,6 @@ namespace RevitMCPCommandSet.Services
                             return parameter.AsInteger() == 1 ? "True" : "False";
                         }
 
-                        // 尝试通过参数名称识别布尔参数
                         string paramName = parameter.Definition.Name.ToLower();
                         if (paramName.Contains("是否") ||
                             paramName.Contains("yes/no") ||
@@ -315,7 +313,6 @@ namespace RevitMCPCommandSet.Services
                             paramName.Contains("visible") ||
                             paramName.Contains("visibility"))
                         {
-                            // 检查存储类型为整数且值为0或1
                             if (parameter.StorageType == StorageType.Integer)
                             {
                                 int intValue = parameter.AsInteger();
@@ -326,7 +323,6 @@ namespace RevitMCPCommandSet.Services
                             }
                         }
 
-                        // 尝试通过储存类型和值字符串识别布尔参数
                         if (parameter.StorageType == StorageType.Integer)
                         {
                             string valueString = parameter.AsValueString();
@@ -339,7 +335,6 @@ namespace RevitMCPCommandSet.Services
                         }
                     }
 
-                    // 默认返回参数值
                     return parameter.AsValueString() ?? parameter.AsInteger().ToString();
                     //throw new NotImplementedException();
 #endif

@@ -23,17 +23,14 @@ namespace RevitMCPCommandSet.Commands.Delete
             {
                 try
                 {
-                    // 解析数组参数
                     var elementIds = parameters?["elementIds"]?.ToObject<string[]>();
                     if (elementIds == null || elementIds.Length == 0)
                     {
                         throw new ArgumentException("元素ID列表不能为空");
                     }
 
-                    // 设置要删除的元素ID数组
                     _handler.ElementIds = elementIds;
 
-                    // 触发外部事件并等待完成
                     if (RaiseAndWaitForCompletion(15000))
                     {
                         if (_handler.IsSuccess)

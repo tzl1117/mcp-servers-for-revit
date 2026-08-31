@@ -11,12 +11,10 @@ namespace RevitMCPCommandSet.Services
         private Autodesk.Revit.ApplicationServices.Application app => uiApp.Application;
 
         /// <summary>
-        /// 事件等待对象
         /// </summary>
         private readonly ManualResetEvent _resetEvent = new ManualResetEvent(false);
 
         /// <summary>
-        /// 标记结果数据
         /// </summary>
         public object TaggingResults { get; private set; }
 
@@ -24,7 +22,6 @@ namespace RevitMCPCommandSet.Services
         private string _tagTypeId;
 
         /// <summary>
-        /// 设置创建的参数
         /// </summary>
         public void SetParameters(bool useLeader, string tagTypeId)
         {
@@ -191,15 +188,12 @@ try
             }
             finally
             {
-                _resetEvent.Set(); // 通知等待线程操作已完成
+                _resetEvent.Set();
             }
         }
 
         /// <summary>
-        /// 等待创建完成
         /// </summary>
-        /// <param name="timeoutMilliseconds">超时时间（毫秒）</param>
-        /// <returns>操作是否在超时前完成</returns>
         public bool WaitForCompletion(int timeoutMilliseconds = 10000)
         {
             _resetEvent.Reset();
@@ -207,7 +201,6 @@ try
         }
 
         /// <summary>
-        /// IExternalEventHandler.GetName 实现
         /// </summary>
         public string GetName()
         {

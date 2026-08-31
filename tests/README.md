@@ -141,7 +141,7 @@ thrown error or an `isError: true` tool response as a pass in that mode.
    starting with `register` (e.g. `registerMyTool`)? `register.ts`
    auto-discovers tools this way - no manual registration list to update.
 2. Did you run `npm run build` in `server/` after adding/editing the file?
-3. Check the console output for `已注册工具: <file>.js` (registered) or a
+3. Check the console output for `Registered tool: <file>.js` or a
    warning that no register function was found.
 
 ### "connect ECONNREFUSED ::1:8080" when calling Revit-dependent tools

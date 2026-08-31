@@ -6,14 +6,11 @@ namespace RevitMCPCommandSet.Services
 {
     public class GetCurrentViewInfoEventHandler : IExternalEventHandler, IWaitableExternalEventHandler
     {
-        // 执行结果
         public CurrentViewInfo ResultInfo { get; private set; }
 
-        // 状态同步对象
         public bool TaskCompleted { get; private set; }
         private readonly ManualResetEvent _resetEvent = new ManualResetEvent(false);
 
-        // 实现IWaitableExternalEventHandler接口
         public bool WaitForCompletion(int timeoutMilliseconds = 10000)
         {
             _resetEvent.Reset();

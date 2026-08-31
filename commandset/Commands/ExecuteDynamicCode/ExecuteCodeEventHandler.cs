@@ -10,26 +10,21 @@ using RevitMCPSDK.API.Interfaces;
 namespace RevitMCPCommandSet.Commands.ExecuteDynamicCode
 {
     /// <summary>
-    /// 处理代码执行的外部事件处理器
     /// </summary>
     public class ExecuteCodeEventHandler : IExternalEventHandler, IWaitableExternalEventHandler
     {
         public const string TransactionModeAuto = "auto";
         public const string TransactionModeNone = "none";
 
-        // 代码执行参数
         private string _generatedCode;
         private object[] _executionParameters;
         private string _transactionMode = TransactionModeAuto;
 
-        // 执行结果信息
         public ExecutionResultInfo ResultInfo { get; private set; }
 
-        // 状态同步对象
         public bool TaskCompleted { get; private set; }
         private readonly ManualResetEvent _resetEvent = new ManualResetEvent(false);
 
-        // 设置要执行的代码和参数
         public void SetExecutionParameters(string code, object[] parameters = null, string transactionMode = TransactionModeAuto)
         {
             _generatedCode = code;
@@ -39,7 +34,6 @@ namespace RevitMCPCommandSet.Commands.ExecuteDynamicCode
             _resetEvent.Reset();
         }
 
-        // 等待执行完成 - IWaitableExternalEventHandler接口实现
         public bool WaitForCompletion(int timeoutMilliseconds = 10000)
         {
             _resetEvent.Reset();
@@ -95,7 +89,6 @@ namespace RevitMCPCommandSet.Commands.ExecuteDynamicCode
 
         private object CompileAndExecuteCode(string code, Document doc, object[] parameters)
         {
-            // 包装代码以规范入口点
             var wrappedCode = $@"
 using System;
 using System.Linq;
@@ -109,7 +102,6 @@ namespace AIGeneratedCode
     {{
         public static object Execute(Document document, object[] parameters)
         {{
-            // 用户代码入口
             {code}
         }}
     }}
@@ -117,14 +109,12 @@ namespace AIGeneratedCode
 
             var syntaxTree = CSharpSyntaxTree.ParseText(wrappedCode);
 
-            // 添加必要的程序集引用（引用所有已加载的程序集）
             var references = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(a => !a.IsDynamic && !string.IsNullOrEmpty(a.Location))
                 .Select(a => MetadataReference.CreateFromFile(a.Location))
                 .Cast<MetadataReference>()
                 .ToList();
 
-            // 编译代码
             var compilation = CSharpCompilation.Create(
                 "AIGeneratedCode",
                 syntaxTrees: new[] { syntaxTree },
@@ -136,7 +126,6 @@ namespace AIGeneratedCode
             {
                 var result = compilation.Emit(ms);
 
-                // 处理编译结果
                 if (!result.Success)
                 {
                     var errors = string.Join("\n", result.Diagnostics
@@ -145,7 +134,6 @@ namespace AIGeneratedCode
                     throw new Exception($"代码编译错误:\n{errors}");
                 }
 
-                // 反射调用执行方法
                 ms.Seek(0, SeekOrigin.Begin);
                 var assembly = Assembly.Load(ms.ToArray());
                 var executorType = assembly.GetType("AIGeneratedCode.CodeExecutor");
@@ -161,7 +149,6 @@ namespace AIGeneratedCode
         }
     }
 
-    // 执行结果数据结构
     public class ExecutionResultInfo
     {
         [JsonProperty("success")]

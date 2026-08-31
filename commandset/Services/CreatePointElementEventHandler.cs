@@ -13,21 +13,17 @@ namespace RevitMCPCommandSet.Services
         private Autodesk.Revit.ApplicationServices.Application app => uiApp.Application;
 
         /// <summary>
-        /// 事件等待对象
         /// </summary>
         private readonly ManualResetEvent _resetEvent = new ManualResetEvent(false);
         /// <summary>
-        /// 创建数据（传入数据）
         /// </summary>
         public List<PointElement> CreatedInfo { get; private set; }
         /// <summary>
-        /// 执行结果（传出数据）
         /// </summary>
         public AIResult<List<int>> Result { get; private set; }
         private List<string> _warnings = new List<string>();
 
         /// <summary>
-        /// 设置创建的参数
         /// </summary>
         public void SetParameters(List<PointElement> data)
         {
@@ -46,11 +42,9 @@ namespace RevitMCPCommandSet.Services
                 {
                     int requestedTypeId = data.TypeId;
 
-                    // Step0 获取构件类型
                     BuiltInCategory builtInCategory = BuiltInCategory.INVALID;
                     Enum.TryParse(data.Category.Replace(".", ""), true, out builtInCategory);
 
-                    // Step1 获取标高和偏移
                     Level baseLevel = null;
                     Level topLevel = null;
                     double topOffset = -1;  // ft
@@ -62,7 +56,6 @@ namespace RevitMCPCommandSet.Services
                     if (baseLevel == null)
                         continue;
 
-                    // Step2 获取族类型
                     FamilySymbol symbol = null;
                     if (data.TypeId != -1 && data.TypeId != 0)
                     {
@@ -73,7 +66,6 @@ namespace RevitMCPCommandSet.Services
                             if (typeEle != null && typeEle is FamilySymbol)
                             {
                                 symbol = typeEle as FamilySymbol;
-                                // 获取symbol的Category对象并转换为BuiltInCategory枚举
                                 builtInCategory = (BuiltInCategory)symbol.Category.Id.GetIntValue();
                             }
                         }
@@ -86,7 +78,7 @@ namespace RevitMCPCommandSet.Services
                             .OfClass(typeof(FamilySymbol))
                             .OfCategory(builtInCategory)
                             .Cast<FamilySymbol>()
-                            .FirstOrDefault(fs => fs.IsActive); // 获取激活的类型作为默认类型
+                            .FirstOrDefault(fs => fs.IsActive);
                         if (symbol == null)
                         {
                             symbol = new FilteredElementCollector(doc)
@@ -108,7 +100,6 @@ namespace RevitMCPCommandSet.Services
                     if (symbol == null)
                         continue;
 
-                    // Step3 调用通用方法创建族实例
                     using (Transaction transaction = new Transaction(doc, "创建点状构件"))
                     {
                         transaction.Start();
@@ -238,15 +229,12 @@ namespace RevitMCPCommandSet.Services
             }
             finally
             {
-                _resetEvent.Set(); // 通知等待线程操作已完成
+                _resetEvent.Set();
             }
         }
 
         /// <summary>
-        /// 等待创建完成
         /// </summary>
-        /// <param name="timeoutMilliseconds">超时时间（毫秒）</param>
-        /// <returns>操作是否在超时前完成</returns>
         public bool WaitForCompletion(int timeoutMilliseconds = 10000)
         {
             _resetEvent.Reset();
@@ -254,7 +242,6 @@ namespace RevitMCPCommandSet.Services
         }
 
         /// <summary>
-        /// IExternalEventHandler.GetName 实现
         /// </summary>
         public string GetName()
         {
