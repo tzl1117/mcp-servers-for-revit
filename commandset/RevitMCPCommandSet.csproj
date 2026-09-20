@@ -46,7 +46,7 @@
     <PropertyGroup Condition="$(Configuration.Contains('R27'))">
         <RevitVersion>2027</RevitVersion>
         <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
-        <DefineConstants>$(DefineConstants);REVIT2022_OR_GREATER;REVIT2023_OR_GREATER;REVIT2024_OR_GREATER</DefineConstants>
+        <DefineConstants>$(DefineConstants);REVIT2022_OR_GREATER;REVIT2023_OR_GREATER;REVIT2024_OR_GREATER;REVIT2027_OR_GREATER</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -64,10 +64,6 @@
         <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitVersion).*" />
 		<PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*" />
 		<PackageReference Include="RevitMCPSDK" Version="$(RevitVersion).*" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Reference Include="System.Net.Http" />
     </ItemGroup>
 
     <Target Name="DeployCommandSet" AfterTargets="Build">
