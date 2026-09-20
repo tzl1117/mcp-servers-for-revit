@@ -66,6 +66,9 @@ jobs:
       - name: Build Revit 2026 (.NET 8)
         run: dotnet build mcp-servers-for-revit.sln -c "Release R26"
 
+      - name: Build Revit 2027 (.NET 8)
+        run: dotnet build mcp-servers-for-revit.sln -c "Release R27"
+
       # ---------------------------------------------------------------
       # Create release assets
       # The AddIn output already contains the complete deployable layout
@@ -108,6 +111,7 @@ jobs:
             @{ Config = "Release R24"; Year = "2024" },
             @{ Config = "Release R25"; Year = "2025" },
             @{ Config = "Release R26"; Year = "2026" }
+            @{ Config = "Release R27"; Year = "2027" }
           )
 
           foreach ($rv in $revitVersions) {
